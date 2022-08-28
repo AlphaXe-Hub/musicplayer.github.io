@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Axios+Vue</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.27.2/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <button @click="get">get一个冷笑话</button>
+    <p id="mes">{{message}}</p>
+</div>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            message: '',
+
+        },
+        methods: {
+            get: function () {
+                // alert("yee");
+                var thisApp=this
+                axios.get("https://autumnfish.cn/api/joke/list?num=1")
+                    .then(function (response) {
+
+                        console.log(response.data.data);
+                        // this.message=response.data.data[0];
+                        // document.getElementById("mes").innerText += response.data.data[0]+"\n";
+                        thisApp.message = response.data.data;
+                    }, function (err) {
+                        alert(err);
+                    });
+            }
+        },
+
+    })
+
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <link rel="stylesheet" type="text/css" href="css/modern-norm.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/prism.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/katex.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/wolai.css"/>
+    <style>
+        input {
+            border-radius: 40px;
+            text-align: center;
+            font-size: x-large;
+            padding: 9px;
+            /* left: 38px; */
+        }
+
+        header {
+            margin-top: 100px;
+        }
+
+        body {
+            background: url(https://pic4.zhimg.com/v2-7aac7f7a5b9e3ae393cb79287c85e22f_r.jpg);
+            /* background-color: var(--wolai-color-blank-bg); */
+            font-family: var(--wolai-normal-font);
+            background-repeat: no-repeat;
+
+
+        }
+
+        table {
+            backdrop-filter: blur(10px);
+        }
+    </style>
+
+
+    <title>音乐播放器</title>
+    <link rel="shortcut icon"
+          href="https://assets.msn.cn/weathermapdata/1/static/svg/72/v2/card/MostlyCloudyNightV2.svg">
+</head>
+<body>
+<header>
+    <!--    <div class="image has"-->
+    <!--         style="background-position-y: 50%; background-image: url(&quot;https://vcdn.wostatic.cn/cover/painting/cnE9h6qvLFKHUcZV1ZXG7y.jpg&quot;)"></div>-->
+    <div class="title">
+        <div data-title="Master专属音乐播放器" class="main-title"></div>
+    </div>
+</header>
+<article>
+
+    <div id="player">
+        <input v-model="query" @keyup.enter="searchMusic" placeholder="请输入歌手">
+        <br>
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=670 height=86
+                v-bind:src="this.songId" v-show="this.songId"></iframe>
+        <br>
+        <div class="wolai-block wolai-simple-table">
+            <table>
+                <thead>
+                <tr>
+                    <th style="width: 228px"><span class="inline-wrap">歌名</span></th>
+                    <th style="width: 233px"><span class="inline-wrap">歌手</span></th>
+                    <th style="width: 193px"><span class="inline-wrap">专辑</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="song in musiclist" @click="playMusic(song.id)">
+                    <td><span class="inline-wrap">{{ song.name }}</span></td>
+                    <td><span class="inline-wrap">{{ song.artists[0].name }}</span></td>
+                    <td><span class="inline-wrap">{{ song.album.name }}</span></td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</article>
+<footer></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/axios/0.27.2/axios.min.js"></script>
+
+<script>
+    var app = new Vue({
+        el: "#player",
+        data: {
+            query: "",
+            musiclist: [],
+            songId: "",
+
+
+        },
+        methods: {
+            searchMusic: function () {
+                var player = this;
+                axios.get("https://autumnfish.cn/search?keywords=" + this.query)
+                    .then(function (response) {
+                        if (response.data.result.songs == null) {
+                            alert("没有资源");
+                        }
+                        console.log(response);
+                        player.musiclist = response.data.result.songs;
+                    }, function (err) {
+
+                    });
+            },
+
+            playMusic: function (id) {
+                this.songId = "//music.163.com/outchain/player?type=2&id=" + id + "&auto=1&height=66";
+            },
+        },
+
+
+    })
+</script>
+
+</body>
+</html>

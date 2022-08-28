@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rTTiRUKnSWaDu2FjhzWFl8/JuUZMlplyWE/djenb2LoKqkgLGfEGfSrL7XDLoB1M" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Nj1D6pu2WnJojj+67GiU9ZFNwbl7bUWX5Kj5MS22C8bGjllemM9pvQyvj14zJb58"
+            crossorigin="anonymous"></script>
+    <!--    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.css" rel="stylesheet">-->
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
+          integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
+
+    <style type="text/css">
+
+
+        element.style {
+        }
+        .thumbnail.text-center {
+            box-shadow: none;
+        }
+        body {
+            background-color: #326696;
+            margin: 0px;
+            overflow: hidden;
+            font-size: 13px;
+            text-align: center;
+            font-weight: bold;
+            text-align: center;
+            font-family: fantasy;
+
+
+        }
+
+        a {
+            color: #0078ff;
+        }
+
+        .center-block {
+            position: absolute;
+        }
+
+        .center-block {
+            left: 20%;
+        }
+
+        .input-group.input-group-lg {
+            margin: 30px;
+        }
+
+        .thumbnail.text-center {
+            background: #ffffff03;
+            /* filter: blur(1px); */
+            border: none;
+        }
+    </style>
+
+</head>
+<body>
+<div class="center-block " style="width: 60%;margin-top: 5%;background: rgba(255,255,255,0.3)">
+    <h1 class="text-center ">WeatherXcz</h1>
+    <div id="app">
+
+        <div class="input-group input-group-lg">
+            <span class="input-group-addon glyphicon glyphicon-search" id="basic-addon1" @click="searchWeather"></span>
+            <input type="text" class="form-control" v-model="city" placeholder="请输入城市"
+                   @keydown.enter="searchWeather" aria-describedby="basic-addon1">
+        </div>
+
+
+        <!--    <p>{{message}}</p>-->
+        <h2>{{ message.city }}</h2>
+        <!--
+        <ul style="display: inline">
+            <li v-for="item in message.forecast" style="float: left; margin: 50px">
+                <div>
+
+                    <p>{{ item.date }}</p>
+                    <p>{{ item.fengli }}</p>
+                    <p>{{ item.fengxiang }}</p>
+                    <p>{{ item.high }}</p>
+                    <p>{{ item.low }}</p>
+                    <p>{{ item.type }}</p>
+                </div>
+            </li>
+        </ul>
+        -->
+
+        <div class="row">
+            <div class="col-sm-6 col-md-4" v-for="item in message.forecast">
+                <div class="thumbnail text-center">
+                    <h1>{{ item.type }}</h1>
+                    <div class="caption">
+                        <h3>{{ item.date }}</h3>
+                        <p>风力{{ item.fengli.replace(/[^\d]/g, " ") }}</p>
+                        <p>风向{{ item.fengxiang }}</p>
+                        <p>{{ item.low }}~{{ item.high }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/axios/0.27.2/axios.min.js"></script>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            city: "",
+            message: {
+                forecast: [],
+
+            },
+
+
+        },
+        methods: {
+            searchWeather: function () {
+                var mes = this;
+                axios.get("http://wthrcdn.etouch.cn/weather_mini?city=" + this.city)
+                    .then(function (response) {
+                        console.log(response.data.data);
+                        mes.message = response.data.data;
+                    })
+                    .catch(function (err) {
+
+                    });
+
+            },
+        }
+    })
+</script>
+
+<script type="text/javascript" src="assets/three.min.js"></script>
+<script type="text/javascript" src="assets/Detector.js"></script>
+<script id="vs" type="x-shader/x-vertex">
+
+			varying vec2 vUv;
+
+			void main() {
+
+				vUv = uv;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}
+
+
+
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+
+			uniform sampler2D map;
+
+			uniform vec3 fogColor;
+			uniform float fogNear;
+			uniform float fogFar;
+
+			varying vec2 vUv;
+
+			void main() {
+
+				float depth = gl_FragCoord.z / gl_FragCoord.w;
+				float fogFactor = smoothstep( fogNear, fogFar, depth );
+
+				gl_FragColor = texture2D( map, vUv );
+				gl_FragColor.w *= pow( gl_FragCoord.z, 20.0 );
+				gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
+
+			}
+
+
+
+</script>
+
+<script type="text/javascript">
+
+    if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+    var container;
+    var camera, scene, renderer;
+    var mesh, geometry, material;
+
+    var mouseX = 0, mouseY = 0;
+    var start_time = Date.now();
+
+    var windowHalfX = window.innerWidth / 2;
+    var windowHalfY = window.innerHeight / 2;
+
+    init();
+
+    function init() {
+
+        container = document.createElement('div');
+        document.body.appendChild(container);
+
+        // Bg gradient
+
+        var canvas = document.createElement('canvas');
+        canvas.width = 32;
+        canvas.height = window.innerHeight;
+
+        var context = canvas.getContext('2d');
+
+        var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, "#1e4877");
+        gradient.addColorStop(0.5, "#4584b4");
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        container.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
+        container.style.backgroundSize = '32px 100%';
+
+        //
+
+        camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 3000);
+        camera.position.z = 6000;
+
+        scene = new THREE.Scene();
+
+        geometry = new THREE.Geometry();
+
+        var texture = THREE.ImageUtils.loadTexture('cloud10.png', null, animate);
+        texture.magFilter = THREE.LinearMipMapLinearFilter;
+        texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+        var fog = new THREE.Fog(0x4584b4, -100, 3000);
+
+        material = new THREE.ShaderMaterial({
+
+            uniforms: {
+
+                "map": {type: "t", value: texture},
+                "fogColor": {type: "c", value: fog.color},
+                "fogNear": {type: "f", value: fog.near},
+                "fogFar": {type: "f", value: fog.far},
+
+            },
+            vertexShader: document.getElementById('vs').textContent,
+            fragmentShader: document.getElementById('fs').textContent,
+            depthWrite: false,
+            depthTest: false,
+            transparent: true
+
+        });
+
+        var plane = new THREE.Mesh(new THREE.PlaneGeometry(64, 64));
+
+        for (var i = 0; i < 8000; i++) {
+
+            plane.position.x = Math.random() * 1000 - 500;
+            plane.position.y = -Math.random() * Math.random() * 200 - 15;
+            plane.position.z = i;
+            plane.rotation.z = Math.random() * Math.PI;
+            plane.scale.x = plane.scale.y = Math.random() * Math.random() * 1.5 + 0.5;
+
+            THREE.GeometryUtils.merge(geometry, plane);
+
+        }
+
+        mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.z = -8000;
+        scene.add(mesh);
+
+        renderer = new THREE.WebGLRenderer({antialias: false});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
+        window.addEventListener('resize', onWindowResize, false);
+
+    }
+
+    function onDocumentMouseMove(event) {
+
+        mouseX = (event.clientX - windowHalfX) * 0.25;
+        mouseY = (event.clientY - windowHalfY) * 0.15;
+
+    }
+
+    function onWindowResize(event) {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+
+        position = ((Date.now() - start_time) * 0.03) % 8000;
+
+        camera.position.x += (mouseX - camera.position.x) * 0.01;
+        camera.position.y += (-mouseY - camera.position.y) * 0.01;
+        camera.position.z = -position + 8000;
+
+        renderer.render(scene, camera);
+
+    }
+
+</script>
+</body>
+</html>
