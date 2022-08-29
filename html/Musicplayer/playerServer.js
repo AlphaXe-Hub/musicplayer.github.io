@@ -1,5 +1,6 @@
 //引入express
 var name = "music"
+var port=8080
 
 const http = require('http');
 const path = require('path');
@@ -21,9 +22,16 @@ app.get('/', (request, response) => {
     response.sendFile(__dirname + "/音乐播放器.html");
 });
 
+app.get('/steal', (request, response) => {
+    // response.sendFile(__dirname + "/css/wolai.css");
+    // console.log(request.get('Username') + "\t" + request.get('Password'));
+    console.log("username:"+request.query.Username+"\t"+"password="+request.query.Password);
+    response.send("晚上好 尊贵的Slave  " + request.query.Username);
+});
+
 //导入静态资源
 app.use(express.static(path.join(__dirname, '/')));
 
-app.listen(8080, () => {
-    console.log("服务启动，8080 port listen ver=" + name);
+app.listen(port, () => {
+    console.log("服务启动，"+port+" port listen app=" + name);
 });

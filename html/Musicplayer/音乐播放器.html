@@ -7,24 +7,44 @@
     <link rel="stylesheet" type="text/css" href="css/prism.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/katex.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/wolai.css"/>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.css" rel="stylesheet">
     <style>
         input {
             border-radius: 40px;
-            text-align: center;
-            font-size: x-large;
             padding: 9px;
             /* left: 38px; */
         }
 
+        input {
+            text-align: center;
+        }
+
+        input {
+            font-size: x-large;
+        }
+
         header {
-            margin-top: 100px;
+            margin-top: 40px;
+        }
+
+        :root {
+            --backimg-url: url(https://pic2.zhimg.com/v2-c2e3652bd970f2b46b9062d723c36eb5_r.jpg)
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --backimg-url: url(https://pic4.zhimg.com/v2-7aac7f7a5b9e3ae393cb79287c85e22f_r.jpg);
+            }
         }
 
         body {
-            background: url(https://pic4.zhimg.com/v2-7aac7f7a5b9e3ae393cb79287c85e22f_r.jpg);
+            background: var(--backimg-url);
+
+            /*background: url(https://pic4.zhimg.com/v2-7aac7f7a5b9e3ae393cb79287c85e22f_r.jpg);*/
             /* background-color: var(--wolai-color-blank-bg); */
             font-family: var(--wolai-normal-font);
             background-repeat: no-repeat;
+            background-attachment: fixed;
 
 
         }
@@ -32,31 +52,157 @@
         table {
             backdrop-filter: blur(10px);
         }
+
+        td {
+            text-align: center;
+        }
+
+        button {
+            float: right;
+            margin: 10px;
+        }
+
+        tr > td, tr > th {
+            border: 0 solid transparent;
+            border-left: 0px solid var(--wolai-table-border-color);
+            border-top: 0px solid var(--wolai-table-border-color);
+        }
+
+        table td, table th {
+            /* font-weight: inherit; */
+            /* text-align: inherit; */
+            padding: 5px 10px;
+            width: 100px;
+        }
+
+        table {
+            border-collapse: separate;
+            border: 0 solid transparent;
+            border-spacing: 0;
+            padding: 0;
+            margin: 6px;
+            border-radius: 3px;
+            box-shadow: 0 0 0 0px var(--wolai-table-border-color);
+        }
+
+
+        #login_btn {
+            margin-bottom: 40px;
+        }
+
+        #login_window {
+            position: fixed;
+
+        }
+
+
+        tr {
+            text-align: center;
+        }
+
+
+        div#login_window {
+            background: #aaaaaa7d;
+            width: 30%;
+            height: 390px;
+            left: 35%;
+            top: 25%;
+            text-align: center;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin: 15px;
+        }
+
+        form.pt-3 {
+            text-align: center;
+        }
+
+        span#login_title {
+            font-size: 40px;
+            font-weight: 900;
+        }
+
+
+        button#login_btn {
+            background: #24588850;
+            position: fixed;
+            left: 80%;
+            border: none;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+            margin: 20px;
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.5s
+        }
+
+        .fade-enter, .fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */
+        {
+            opacity: 0
+        }
+
     </style>
-
-
     <title>音乐播放器</title>
     <link rel="shortcut icon"
           href="https://assets.msn.cn/weathermapdata/1/static/svg/72/v2/card/MostlyCloudyNightV2.svg">
 </head>
 <body>
+
+
 <header>
+    <div id="login">
+
+        <button id="login_btn" @click="loginWindow=true" class="btn btn-danger">{{ User }}</button>
+        <transition name="fade">
+            <div id="login_window" v-if="loginWindow">
+
+                <button @click="loginWindow=false" class="btn btn-default">X</button>
+
+                <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                    <span id="login_title">Login</span>
+                    <form class="pt-3">
+                        <div class="form-group">
+                            <input type="email" class="form-control form-control-lg" id="exampleInputEmail1"
+                                   placeholder="Username" v-model="Username">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control form-control-lg" id="exampleInputPassword1"
+                                   placeholder="Password" v-model="Password">
+                        </div>
+                        <div class="mt-3">
+                            <a class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
+                               href="#" @click="signin">SIGN IN</a>
+                        </div>
+                        <div class="text-center mt-4 font-weight-light">
+                            Don't have an account? <a href="register.html" class="text-primary">Create</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </transition>
+    </div>
     <!--    <div class="image has"-->
     <!--         style="background-position-y: 50%; background-image: url(&quot;https://vcdn.wostatic.cn/cover/painting/cnE9h6qvLFKHUcZV1ZXG7y.jpg&quot;)"></div>-->
     <div class="title">
         <div data-title="Master专属音乐播放器" class="main-title"></div>
     </div>
+
 </header>
 <article>
 
     <div id="player">
-        <input v-model="query" @keyup.enter="searchMusic" placeholder="请输入歌手">
+        <input v-model="query" @keyup="searchMusic" placeholder="请输入歌曲或歌手"
+               style=" background-color: var(--wolai-color-blank-bg);">
         <br>
         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=670 height=86
                 v-bind:src="this.songId" v-show="this.songId"></iframe>
         <br>
         <div class="wolai-block wolai-simple-table">
-            <table>
+            <table v-show="query">
                 <thead>
                 <tr>
                     <th style="width: 228px"><span class="inline-wrap">歌名</span></th>
@@ -88,6 +234,7 @@
             query: "",
             musiclist: [],
             songId: "",
+            songUrl: "",
 
 
         },
@@ -112,6 +259,34 @@
         },
 
 
+    })
+</script>
+
+<script>
+    var app = new Vue({
+        el: "#login",
+        data: {
+            loginWindow: false,
+            Username: '',
+            Password: '',
+            User: '登录',
+
+
+        },
+        methods: {
+            signin: function () {
+                var that = this;
+                axios.get("http://192.168.15.12:8080/steal?Username=" + this.Username + "&Password=" + this.Password)
+                    .then(function (response) {
+                        console.log(response.data);
+                        alert(response.data);
+                        that.User = response.data;
+                    }, function (err) {
+
+                    });
+                this.loginWindow = false;
+            },
+        }
     })
 </script>
 
